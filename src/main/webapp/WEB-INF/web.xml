@@ -4,4 +4,14 @@
 
 <web-app>
   <display-name>Weather Webapp</display-name>
+  <servlet>
+    <servlet-name>weather</servlet-name>
+    <servlet-class>
+	  com.grigore.weatherwebapp.servlet.WeatherServlet
+    </servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>weather</servlet-name>
+    <url-pattern>/weather</url-pattern>
+  </servlet-mapping>
 </web-app>
