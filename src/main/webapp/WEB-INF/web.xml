@@ -15,7 +15,7 @@
   </listener--> 
   
   <servlet>
-    <servlet-name>weather</servlet-name>
+    <servlet-name>WeatherServlet</servlet-name>
     <servlet-class>com.grigore.weatherwebapp.impl.servlet.WeatherServlet</servlet-class>
     <init-param>
     	<param-name>owmApiKey</param-name>
@@ -23,8 +23,18 @@
     </init-param>
   </servlet>
   <servlet-mapping>
-    <servlet-name>weather</servlet-name>
+    <servlet-name>WeatherServlet</servlet-name>
     <url-pattern>/weather</url-pattern>
   </servlet-mapping>
+  
+  <filter>
+    <filter-name>RequestParamFilter</filter-name>
+	<filter-class>com.grigore.weatherwebapp.impl.filter.RequestParamFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+      <filter-name>RequestParamFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+    </filter-mapping>
     
 </web-app>
