@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jsoup.helper.StringUtil;
+
 import net.aksingh.owmjapis.CurrentWeather;
 import net.aksingh.owmjapis.OpenWeatherMap;
 
@@ -25,6 +27,7 @@ public class WeatherServlet extends HttpServlet {
 	
 	private static final String OWM_API_KEY = "owmApiKey";
 	private static final String PARAM_CITY= "city";
+	private static final String DF_CURRENT_DATE= "EEE, d MMM yyyy, hh:mm aaa";
 	
 	private String owmApiKey = null;
 	
@@ -42,29 +45,33 @@ public class WeatherServlet extends HttpServlet {
 		
 		resp.setCharacterEncoding(StandardCharsets.UTF_8.toString());
 		
+		if (StringUtil.isBlank(owmApiKey)) {
+			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
+		
 		OpenWeatherMap owm = new OpenWeatherMap(owmApiKey);
 		CurrentWeather cw = owm.currentWeatherByCityName(req.getParameter(PARAM_CITY));
 		
-		if (cw != null) {
-			resp.getWriter().append(getCurrentDate() + "\n");
-			resp.getWriter().append(cw.getCityName() + "\n");
-			resp.getWriter().append(cw.getWeatherInstance(0).getWeatherDescription() + "\n");
-			float minTemp = cw.getMainInstance().getMinTemperature();
-			float maxTemp = cw.getMainInstance().getMaxTemperature();
-			
-			resp.getWriter().append(minTemp + "\n");
-			resp.getWriter().append(maxTemp + "\n");
-			
-			resp.getWriter().append(fahrenheitToCelsius(minTemp) + "\n");
-			resp.getWriter().append(fahrenheitToCelsius(maxTemp) + "\n");
-		} else {
-			
+		if (cw == null) {
 			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
+		
+		
+		resp.getWriter().append(getCurrentDate() + "\n");
+		
+		resp.getWriter().append(cw.getCityName() + "\n");
+		resp.getWriter().append(cw.getWeatherInstance(0).getWeatherDescription() + "\n");
+		
+		float minTemp = cw.getMainInstance().getMinTemperature();
+		float maxTemp = cw.getMainInstance().getMaxTemperature();
+		resp.getWriter().append(minTemp + "\n");
+		resp.getWriter().append(maxTemp + "\n");
+		resp.getWriter().append(fahrenheitToCelsius(minTemp) + "\n");
+		resp.getWriter().append(fahrenheitToCelsius(maxTemp) + "\n");
 	}
 	
 	private String getCurrentDate() {
-		SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy, hh:mm aaa");
+		SimpleDateFormat sdf = new SimpleDateFormat(DF_CURRENT_DATE);
 		return sdf.format(new GregorianCalendar().getTime());
 	}
 	
